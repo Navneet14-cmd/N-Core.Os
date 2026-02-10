@@ -168,14 +168,14 @@ export default function App() {
         </div>
       </nav>
 
-      {/* MAIN CONTENT */}
-      <main className="flex-1 overflow-y-auto relative p-12 custom-scrollbar">
+      {/* MAIN CONTENT: Fixed overflow-x and padding */}
+      <main className="flex-1 overflow-y-auto overflow-x-hidden relative p-6 lg:p-12 custom-scrollbar">
         
         {/* Visual Decoration */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-cyan-500/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/5 blur-[100px] rounded-full -ml-32 -mb-32 pointer-events-none" />
 
-        <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="relative z-10 w-full max-w-7xl mx-auto">
           <ContextMenu>
             <ContextMenuTrigger className="block min-h-[85vh] w-full">
               <AnimatePresence mode="wait">
@@ -185,6 +185,7 @@ export default function App() {
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="w-full overflow-x-hidden"
                 >
                   {/* Each component can now check auth.currentUser if needed */}
                   {activeTab === 'cpu' && <CPULab />}
