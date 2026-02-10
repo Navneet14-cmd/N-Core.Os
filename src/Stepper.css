@@ -1,0 +1,111 @@
+.stepper-outer-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.stepper-glass-card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(34, 211, 238, 0.1);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Indicators Row */
+.stepper-indicator-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+}
+
+.stepper-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.stepper-dot.inactive {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.stepper-dot.active {
+  background: rgba(34, 211, 238, 0.1);
+  color: #22d3ee;
+  border-color: #22d3ee;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+}
+
+.stepper-dot.complete {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+/* Connecting Lines */
+.stepper-line {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stepper-line-progress {
+  position: absolute;
+  height: 100%;
+  background: #22d3ee;
+  box-shadow: 0 0 10px #22d3ee;
+}
+
+/* Navigation Buttons */
+.stepper-nav-btns {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.stepper-btn-back {
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.stepper-btn-back:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.stepper-btn-next {
+  padding: 0.75rem 1.8rem;
+  background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+  color: #020617;
+  border-radius: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.4);
+}
+
+.stepper-btn-next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(34, 211, 238, 0.6);
+}

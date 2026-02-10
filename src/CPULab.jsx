@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Play, Trash2, Cpu, Clock, Activity, Settings2, CloudSync } from 'lucide-react';
+import { Plus, Play, Trash2, Cpu, Clock, Activity, Settings2, CloudSync, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// --- COMPONENTS ---
+import Stepper, { Step } from './Stepper';
+import './Stepper.css';
 
 // --- FIREBASE & SYNC IMPORTS ---
 import { auth } from './lib/firebase';
@@ -17,7 +21,49 @@ export default function CPULab() {
   const [ganttChart, setGanttChart] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newP, setNewP] = useState({ arrival: 0, burst: 1, priority: 1 });
-  const [isSyncing, setIsSyncing] = useState(false); // Sync visual state
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // --- DYNAMIC STEP GENERATOR ---
+  const getAlgorithmSteps = () => {
+    const baseSteps = [
+      {
+        title: "Initialize Ready Queue",
+        content: `Loading ${processes.length} processes into the kernel memory. Sorting by arrival time to begin simulation.`
+      }
+    ];
+
+    const algoSpecific = {
+      FCFS: {
+        title: "First-Come, First-Served",
+        content: "The simplest logic: processes are executed strictly in the order they arrive. No preemption occurs."
+      },
+      SJF: {
+        title: "Shortest Job First",
+        content: "Non-preemptive SJF scans the ready queue and selects the task with the smallest burst time next."
+      },
+      SRTF: {
+        title: "Shortest Remaining Time",
+        content: "A preemptive SJF. The kernel checks every millisecond if a new process with a shorter remaining time has arrived."
+      },
+      RR: {
+        title: "Round Robin",
+        content: `Each process gets a ${quantum}ms time slice. If not finished, it's moved back to the end of the queue.`
+      },
+      Priority: {
+        title: "Priority Scheduling",
+        content: "The scheduler selects the process with the highest priority level (lowest numerical value) first."
+      }
+    };
+
+    return [
+      ...baseSteps,
+      algoSpecific[algo],
+      {
+        title: "Metrics Finalized",
+        content: "The Gantt chart is rendered and performance metrics (AWT & ATAT) are calculated for the current batch."
+      }
+    ];
+  };
 
   const calculateSchedule = () => {
     let schedule = [];
@@ -92,7 +138,6 @@ export default function CPULab() {
 
   const metrics = calculateMetrics();
 
-  // --- MODIFIED HANDLE ADD WITH SYNC ---
   const handleAdd = async (e) => {
     e.preventDefault();
     const id = processes.length > 0 ? Math.max(...processes.map(p => p.id)) + 1 : 1;
@@ -102,24 +147,22 @@ export default function CPULab() {
     setShowAddModal(false);
     setNewP({ arrival: 0, burst: 1, priority: 1 });
 
-    // Cloud Sync Logic
     if (auth.currentUser) {
       setIsSyncing(true);
       await syncProgress(auth.currentUser.uid, 'cpu');
-      setTimeout(() => setIsSyncing(false), 2000); // Visual delay for the "Sync" effect
+      setTimeout(() => setIsSyncing(false), 2000);
     }
   };
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-8 max-w-6xl mx-auto pb-20">
+      {/* HEADER SECTION */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div className="flex items-center gap-6">
           <div>
             <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-tight">CPU Lab Pro</h2>
             <p className="text-cyan-400/50 font-mono text-xs tracking-[0.3em]">Scheduler Engine v3.0</p>
           </div>
-          
-          {/* SYNC INDICATOR */}
           <AnimatePresence>
             {isSyncing && (
               <motion.div 
@@ -153,8 +196,7 @@ export default function CPULab() {
         </motion.div>
       )}
 
-      {/* Gantt Chart Container */}
-      
+      {/* Timeline Visualizer */}
       <div className="bg-slate-900/40 border border-white/5 rounded-3xl p-8 backdrop-blur-xl relative overflow-hidden">
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-8 flex items-center gap-2">
           <Clock size={14} className="text-cyan-400" /> Timeline Visualizer
@@ -177,6 +219,28 @@ export default function CPULab() {
         </div>
       </div>
 
+      {/* STEPPER LOGIC INTEGRATION */}
+      <div className="bg-slate-900/40 border border-white/5 rounded-3xl p-8">
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+          <Info size={14} className="text-cyan-400" /> Kernel Logic Walkthrough
+        </h3>
+        <Stepper
+          initialStep={1}
+          nextButtonText="Next Logic"
+          onStepChange={(step) => console.log("Kernel Phase:", step)}
+        >
+          {getAlgorithmSteps().map((s, i) => (
+            <Step key={i}>
+              <div className="space-y-2">
+                <h4 className="text-lg font-bold text-white uppercase italic tracking-tight">{s.title}</h4>
+                <p className="text-sm text-slate-400 leading-relaxed">{s.content}</p>
+              </div>
+            </Step>
+          ))}
+        </Stepper>
+      </div>
+
+      {/* Process Control & Metrics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-slate-900/40 border border-white/5 rounded-3xl p-6">
           <div className="flex justify-between items-center mb-6">
